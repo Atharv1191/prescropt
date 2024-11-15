@@ -13,9 +13,7 @@ const port = process.env.PORT || 4000
 connectDB()
 //middleweres
 app.use(express.json());
-app.use(cors({
-    origin: "https://vercel.com/atharv1191s-projects/prescropto-frontend",
-}));
+app.use(cors({ origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app' }));;
 connectCloudinary()
 
 //api end point
