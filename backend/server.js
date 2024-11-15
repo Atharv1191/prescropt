@@ -14,7 +14,7 @@ connectDB()
 //middleweres
 app.use(express.json());
 app.use(cors({
-    origin: "*",
+    origin: "https://vercel.com/atharv1191s-projects/prescropto-frontend",
 }));
 connectCloudinary()
 
