@@ -8,40 +8,24 @@ const adminRoute = require("./routes/AdminRoute");
 const doctorRoute = require("./routes/DoctorRoute");
 const userRoute = require("./routes/userRoute");
 
-// App config
-const app = express();
-const port = process.env.PORT || 4000;
 
-// Connect to the database
-connectDB();
+//app config
+const app = express()
+const port = process.env.PORT || 4000
+connectDB()
+connectCloudinary()
 
-// Configure Cloudinary
-connectCloudinary();
+// middlewares
+app.use(express.json())
+app.use(cors())
 
-// Middlewares
-app.use(express.json());
+// api endpoints
+app.use("/api/user", userRoute)
+app.use("/api/admin", adminRoute)
+app.use("/api/doctor", doctorRoute)
 
-// Configure CORS
-app.use(cors({
-  origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app', // Frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Handle preflight requests for all routes
-app.options('*', cors());
-
-// API Endpoints
-app.use('/api/admin', adminRoute);
-app.use('/api/doctor', doctorRoute);
-app.use('/api/user', userRoute);
-
-// Test route
-app.get('/', (req, res) => {
-  res.send("API working great");
+app.get("/", (req, res) => {
+  res.send("API Working")
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on ${port}`);
-});
+app.listen(port, () => console.log(`Server started on PORT:${port}`))
