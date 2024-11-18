@@ -11,33 +11,25 @@ const userRoute = require("./routes/userRoute");
 // App config
 const app = express();
 const port = process.env.PORT || 4000;
+
+// Connect to the database
 connectDB();
+
+// Configure Cloudinary
+connectCloudinary();
 
 // Middlewares
 app.use(express.json());
 
-// Configure CORS to allow requests from your frontend origin
+// Configure CORS
 app.use(cors({
-  origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app',
+  origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app', // Frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Alternatively, set headers directly
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
 // Handle preflight requests for all routes
-app.options('*', cors({
-  origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app'
-}));
-
-// Connect Cloudinary
-connectCloudinary();
+app.options('*', cors());
 
 // API Endpoints
 app.use('/api/admin', adminRoute);
