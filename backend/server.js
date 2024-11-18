@@ -1,31 +1,52 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const connectDB = require("./config/mongodb");
-dotenv.config();
-const connectCloudinary = require("./config/cloudinary");
-const adminRoute = require("./routes/AdminRoute");
-const doctorRoute = require("./routes/DoctorRoute");
-const userRoute = require("./routes/userRoute");
+import express from "express";
+import cors from 'cors';
+import 'dotenv/config';
+import connectDB from "./config/mongodb.js";
+import connectCloudinary from "./config/cloudinary.js";
+import userRouter from "./routes/userRoute.js";
+import doctorRouter from "./routes/doctorRoute.js";
+import adminRouter from "./routes/adminRoute.js";
 
+// App config
+const app = express();
+const port = process.env.PORT || 4000;
 
-//app config
-const app = express()
-const port = process.env.PORT || 4000
-connectDB()
-connectCloudinary()
+// Connect to the database and Cloudinary
+connectDB();
+connectCloudinary();
 
-// middlewares
-app.use(express.json())
-app.use(cors())
+// Middlewares
+app.use(express.json());
 
-// api endpoints
-app.use("/api/user", userRoute)
-app.use("/api/admin", adminRoute)
-app.use("/api/doctor", doctorRoute)
+// CORS Configuration
+const allowedOrigins = [
+  'https://prescropto-frontend-nackgivxd-atharv1191s-projects.vercel.app',
+  'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app'
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
+// Handle preflight requests
+app.options('*', cors());
+
+// API Endpoints
+app.use("/api/user", userRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/doctor", doctorRouter);
+
+// Test route
 app.get("/", (req, res) => {
-  res.send("API Working")
+  res.send("API Working");
 });
 
-app.listen(port, () => console.log(`Server started on PORT:${port}`))
+// Start the server
+app.listen(port, () => console.log(`Server started on PORT:${port}`));
