@@ -22,14 +22,9 @@ connectCloudinary();
 app.use(express.json());
 
 // Configure CORS
-app.use(cors({
-  origin: 'https://prescropto-frontend-c55xb9zyu-atharv1191s-projects.vercel.app', // Frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use (cors())
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+
 
 // API Endpoints
 app.use('/api/admin', adminRoute);
