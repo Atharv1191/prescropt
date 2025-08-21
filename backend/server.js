@@ -24,7 +24,7 @@ app.use(express.json());
 // Configure CORS - Fix this part
 const corsOptions = {
   origin: [
-    'https://prescropto-frontend.vercel.app',
+    'https://prescropto-frontend.onrender.com',
     'http://localhost:3000',
     'http://localhost:5173', // for Vite
     'https://your-admin-domain.vercel.app' // if you have admin panel
