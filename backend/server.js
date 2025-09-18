@@ -20,44 +20,44 @@ connectDB();
 // Configure Cloudinary
 connectCloudinary();
 
-// CORS Configuration - Apply BEFORE other middlewares
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    const allowedOrigins = [
-      'https://prescropto-frontend.onrender.com',
-      'http://localhost:3000',
-      'http://localhost:5173', // for Vite
-      'https://prescropto-asmin.onrender.com', // update with actual domain
-      // Add your actual frontend domains here
-    ];
+// // CORS Configuration - Apply BEFORE other middlewares
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     const allowedOrigins = [
+//       'https://prescropto-frontend.onrender.com',
+//       'http://localhost:3000',
+//       'http://localhost:5173', // for Vite
+//       'https://prescropto-asmin.onrender.com', // update with actual domain
+//       // Add your actual frontend domains here
+//     ];
     
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'X-Requested-With',
-    'Accept',
-    'Origin'
-  ],
-  exposedHeaders: ['Authorization'],
-  preflightContinue: false,
-  optionsSuccessStatus: 200
-};
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+//   allowedHeaders: [
+//     'Content-Type', 
+//     'Authorization', 
+//     'X-Requested-With',
+//     'Accept',
+//     'Origin'
+//   ],
+//   exposedHeaders: ['Authorization'],
+//   preflightContinue: false,
+//   optionsSuccessStatus: 200
+// };
 
-// Apply CORS before other middlewares
-app.use(cors(corsOptions));
+// // Apply CORS before other middlewares
+// app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
-
+// // Handle preflight requests explicitly
+// app.options('*', cors(corsOptions));
+app.use(cors())
 // Body parsing middleware - Apply AFTER CORS
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
