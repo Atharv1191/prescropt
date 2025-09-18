@@ -20,45 +20,28 @@ connectDB();
 // Configure Cloudinary
 connectCloudinary();
 
-// // CORS Configuration - Apply BEFORE other middlewares
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     const allowedOrigins = [
-//       'https://prescropto-frontend.onrender.com',
-//       'http://localhost:3000',
-//       'http://localhost:5173', // for Vite
-//       'https://prescropto-asmin.onrender.com', // update with actual domain
-//       // Add your actual frontend domains here
-//     ];
-    
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-//   allowedHeaders: [
-//     'Content-Type', 
-//     'Authorization', 
-//     'X-Requested-With',
-//     'Accept',
-//     'Origin'
-//   ],
-//   exposedHeaders: ['Authorization'],
-//   preflightContinue: false,
-//   optionsSuccessStatus: 200
-// };
+// CORS - Allow all origins
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
-// // Apply CORS before other middlewares
-// app.use(cors(corsOptions));
+// Manual CORS headers as backup for Vercel
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,Accept,Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
-// // Handle preflight requests explicitly
-// app.options('*', cors(corsOptions));
-app.use(cors())
-// Body parsing middleware - Apply AFTER CORS
+// Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -72,20 +55,13 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     message: "API working great",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    cors: "enabled"
   });
 });
 
-// CORS error handling middleware
+// Error handling middleware
 app.use((err, req, res, next) => {
-  if (err.message === 'Not allowed by CORS') {
-    return res.status(403).json({
-      success: false,
-      message: 'CORS policy violation',
-      origin: req.get('origin')
-    });
-  }
-  
   console.error(err.stack);
   res.status(500).json({
     success: false,
@@ -103,8 +79,13 @@ app.use('*', (req, res) => {
   });
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Start server (only for local development)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
+
+// CRITICAL: Export for Vercel
+module.exports = app;
